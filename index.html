@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de Utilidad ASAI</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #0066cc;
+            --primary-light: #e6f0ff;
+            --primary-lighter: #f0f5ff;
+            --foreground: #1a1a1a;
+            --foreground-light: #666666;
+            --border: #e8e8e8;
+            --background: #fafafa;
+            --white: #ffffff;
+            --shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--background);
+            color: var(--foreground);
+            line-height: 1.6;
+        }
+
+        .hero-bg {
+            background-image: linear-gradient(135deg, var(--primary-lighter) 0%, var(--white) 100%);
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+        }
+
+        .min-h-screen {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header */
+        header {
+            background-color: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        @media (min-width: 640px) {
+            .container {
+                padding: 0 1.5rem;
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .container {
+                padding: 0 2rem;
+            }
+        }
+
+        header .container {
+            padding-top: 1.5rem;
+            padding-bottom: 1.5rem;
+        }
+
+        h1 {
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.875rem;
+            font-weight: 700;
+            color: var(--foreground);
+            margin-bottom: 0.25rem;
+        }
+
+        .subtitle {
+            font-size: 0.875rem;
+            color: var(--foreground-light);
+            margin-top: 0.25rem;
+        }
+
+        /* Main Content */
+        main {
+            flex: 1;
+            padding: 3rem 0;
+        }
+
+        .content-wrapper {
+            max-width: 42rem;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        /* Card */
+        .card {
+            background-color: var(--white);
+            border-radius: 0.5rem;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+            padding: 2rem;
+        }
+
+        .card-asai {
+            border-color: rgba(0, 102, 204, 0.3);
+            background: linear-gradient(to bottom right, rgba(0, 102, 204, 0.05), transparent);
+        }
+
+        .card h2 {
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--foreground);
+            margin-bottom: 1.5rem;
+        }
+
+        .card-asai h2 {
+            color: var(--primary);
+        }
+
+        /* Form Groups */
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--foreground);
+            font-family: 'Inter', sans-serif;
+        }
+
+        input[type="number"] {
+            padding: 0.5rem;
+            border: 1px solid var(--border);
+            border-radius: 0.375rem;
+            font-size: 1rem;
+            font-family: 'Inter', sans-serif;
+            transition: all 0.15s ease;
+        }
+
+        input[type="number"]:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px var(--primary-light);
+        }
+
+        input[type="number"]::placeholder {
+            color: #999;
+        }
+
+        /* Result Box */
+        .result-box {
+            background: linear-gradient(to right, rgba(0, 102, 204, 0.05), rgba(0, 102, 204, 0.1));
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            border: 1px solid rgba(0, 102, 204, 0.2);
+            margin-top: 2rem;
+        }
+
+        .result-label {
+            font-size: 0.875rem;
+            color: var(--foreground-light);
+            font-family: 'Inter', sans-serif;
+            margin-bottom: 0.5rem;
+        }
+
+        .result-value {
+            font-family: 'Poppins', sans-serif;
+            font-size: 2.25rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        /* Grid for ASAI Results */
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .result-item {
+            background-color: rgba(255, 255, 255, 0.6);
+            border-radius: 0.5rem;
+            padding: 1rem;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .result-item.highlight {
+            background: linear-gradient(to bottom right, rgba(0, 102, 204, 0.1), rgba(0, 102, 204, 0.05));
+            border-color: rgba(0, 102, 204, 0.2);
+        }
+
+        .result-item-label {
+            font-size: 0.75rem;
+            color: var(--foreground-light);
+            font-family: 'Inter', sans-serif;
+            margin-bottom: 0.5rem;
+        }
+
+        .result-item-value {
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--foreground);
+        }
+
+        .result-item.highlight .result-item-value {
+            color: var(--primary);
+        }
+
+        /* Footer */
+        .footer-note {
+            text-align: center;
+            font-size: 0.75rem;
+            color: var(--foreground-light);
+            font-family: 'Inter', sans-serif;
+            margin-top: 2rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.5rem;
+            }
+
+            .card {
+                padding: 1.5rem;
+            }
+
+            .result-value {
+                font-size: 1.875rem;
+            }
+
+            .results-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Animation */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        .card {
+            animation: fadeIn 0.4s ease-in-out;
+        }
+    </style>
+</head>
+<body>
+    <div class="min-h-screen hero-bg">
+        <!-- Header -->
+        <header>
+            <div class="container">
+                <h1>Calculadora de Utilidad</h1>
+                <p class="subtitle">Conexiones Americanas vs ASAI</p>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main>
+            <div class="container">
+                <div class="content-wrapper">
+                    <!-- Conexiones Americanas Card -->
+                    <div class="card">
+                        <h2>Conexiones Americanas</h2>
+
+                        <div class="form-group">
+                            <label for="costo">Costo de Conexión Americana</label>
+                            <input 
+                                type="number" 
+                                id="costo" 
+                                placeholder="Ej: 1500"
+                                oninput="calcular()"
+                            >
+                        </div>
+
+                        <div class="form-group">
+                            <label for="precio">Precio de Venta</label>
+                            <input 
+                                type="number" 
+                                id="precio" 
+                                placeholder="Ej: 3000"
+                                oninput="calcular()"
+                            >
+                        </div>
+
+                        <div class="result-box">
+                            <p class="result-label">Margen de Utilidad</p>
+                            <p class="result-value"><span id="utilidad">0</span>%</p>
+                        </div>
+                    </div>
+
+                    <!-- ASAI Comparison Card -->
+                    <div class="card card-asai">
+                        <h2>Con ASAI</h2>
+
+                        <div class="results-grid">
+                            <!-- Costo ASAI -->
+                            <div class="result-item">
+                                <p class="result-item-label">Costo</p>
+                                <p class="result-item-value">$<span id="costoAsai">0.00</span></p>
+                            </div>
+
+                            <!-- Precio ASAI -->
+                            <div class="result-item">
+                                <p class="result-item-label">Precio de Venta Sugerido</p>
+                                <p class="result-item-value">$<span id="precioAsai">0.00</span></p>
+                            </div>
+
+                            <!-- Utilidad ASAI -->
+                            <div class="result-item highlight">
+                                <p class="result-item-label">Margen de Utilidad</p>
+                                <p class="result-item-value"><span id="utilidadAsai">0</span>%</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Footer Note -->
+                    <p class="footer-note">
+                        Los cálculos se actualizan automáticamente mientras ingresas los valores.
+                    </p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        function calcular() {
+            // Obtener valores de los inputs
+            const costo = parseFloat(document.getElementById('costo').value) || 0;
+            const precio = parseFloat(document.getElementById('precio').value) || 0;
+
+            // Cálculo para Conexiones Americanas
+            let utilidad = 0;
+            if (costo > 0) {
+                utilidad = ((precio - costo) / costo) * 100;
+            }
+            document.getElementById('utilidad').textContent = utilidad.toFixed(2);
+
+            // Cálculo para ASAI (35% del costo, precio duplicado)
+            const costoAsai = costo * 0.35;
+            const precioAsai = costoAsai * 2;
+            let utilidadAsai = 0;
+            if (costoAsai > 0) {
+                utilidadAsai = ((precioAsai - costoAsai) / costoAsai) * 100;
+            }
+
+            // Actualizar valores en el DOM
+            document.getElementById('costoAsai').textContent = costoAsai.toFixed(2);
+            document.getElementById('precioAsai').textContent = precioAsai.toFixed(2);
+            document.getElementById('utilidadAsai').textContent = utilidadAsai.toFixed(2);
+        }
+
+        // Inicializar cálculos al cargar la página
+        document.addEventListener('DOMContentLoaded', calcular);
+    </script>
+</body>
+</html>
